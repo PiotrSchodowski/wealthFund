@@ -16,6 +16,8 @@ public class UserController {
     @Autowired
     private final UserService userService;
 
+
+    //todo SWAGGER 2 CONFIGURATION todo//
 //    @ApiOperation(value = "Endpoint allowing to add new User")
 //    @ApiResponses(value = {
 //            @ApiResponse(code = 200, message = "Successfully added new User"),
