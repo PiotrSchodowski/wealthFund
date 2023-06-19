@@ -1,4 +1,4 @@
-package com.example.wealthFund;
+package com.example.wealthFund.controllerTests;
 
 import com.example.wealthFund.repository.entity.User;
 import com.example.wealthFund.restController.UserController;
@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class UserControllerTest {
+
 
     //BDD
     @Test

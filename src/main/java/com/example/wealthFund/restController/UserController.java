@@ -1,8 +1,7 @@
 package com.example.wealthFund.restController;
 
-import com.example.wealthFund.repository.UserRepository;
 import com.example.wealthFund.repository.entity.User;
-import com.example.wealthFund.service.UserService;
+import com.example.wealthFund.serviceTests.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ public class UserController {
 //            @ApiResponse(code = 200, message = "Successfully added new User"),
 //            @ApiResponse(code = 500, message = "This user name is already exists. Enter a different name.")})
     @PostMapping("/users")
-    public User addNewUser(@RequestParam String name) {
+    public String addNewUser(@RequestParam String name) {
         return userService.addNewUser(name);
     }
 
