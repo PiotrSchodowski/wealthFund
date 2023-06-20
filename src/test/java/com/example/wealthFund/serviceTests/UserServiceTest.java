@@ -1,59 +1,64 @@
 package com.example.wealthFund.serviceTests;
 
+import com.example.wealthFund.exception.WealthFundException;
+import com.example.wealthFund.repository.UserRepository;
+import com.example.wealthFund.repository.entity.User;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
+    @InjectMocks
+    UserService userService;
+    @Mock
+    UserRepository userRepository;
+
     @Test
-    public void is_the_username_contains_whitespaces() {
-        //given
-        String userName1 = "  Piotr ";
-        String userName2 = "Piotr    Schodowski";
-        String userName3 = "PiotrSchodowski";
+    public void should_ReturnTrueIfUserNameContainsWhitespace() {
 
-        //when
-        boolean userName1ContainsWhiteSpaces = false;
-        boolean userName2ContainsWhiteSpaces = false;
-        boolean userName3ContainsWhiteSpaces = false;
+        boolean firstCase = userService.isTheUserNameContainsWhiteSpaces("srg");
+        boolean secondCase = userService.isTheUserNameContainsWhiteSpaces("sr g");
+        boolean thirdCase = userService.isTheUserNameContainsWhiteSpaces(" srg ");
 
-        //then
-        for (int i = 0; i < userName1.length(); i++) {
-            if (Character.isWhitespace(userName1.charAt(i))) {
-                userName1ContainsWhiteSpaces = true;
-            }
-        }
-        for (int i = 0; i < userName2.length(); i++) {
-            if (Character.isWhitespace(userName2.charAt(i))) {
-                userName2ContainsWhiteSpaces = true;
-            }
-        }
-        for (int i = 0; i < userName3.length(); i++) {
-            if (Character.isWhitespace(userName3.charAt(i))) {
-                userName3ContainsWhiteSpaces = true;
-            }
-        }
-        //assert
-        Assert.assertTrue(userName1ContainsWhiteSpaces);
-        Assert.assertTrue(userName2ContainsWhiteSpaces);
-        Assert.assertFalse(userName3ContainsWhiteSpaces);
+        Assert.assertEquals(false, firstCase);
+        Assert.assertEquals(true, secondCase);
+        Assert.assertEquals(true, thirdCase);
     }
     @Test
-    public void is_the_username_not_enough_length() {
-        //given
-        String username1 = "OlaMaKota";
-        String username2 = "OlaMaKotaAKotMaAle";
-        String username3 = "12";
+    public void should_ReturnTrueIfUserNameNotAcceptableLength() {
 
-        //when
-        boolean userName1NotEnoughLength = username1.length() < 3 || username1.length() > 16;
-        boolean userName2NotEnoughLength = username2.length() < 3 || username2.length() > 16;
-        boolean userName3NotEnoughLength = username3.length() < 3 || username3.length() > 16;
+        boolean firstCase = userService.isTheUserNameNotAcceptableLength("OlaMaKota");
+        boolean secondCase = userService.isTheUserNameNotAcceptableLength("Ol");
+        boolean thirdCase = userService.isTheUserNameNotAcceptableLength("OlaMaKotaAKotMaOle");
 
-        //assert
-        Assert.assertFalse(userName1NotEnoughLength);
-        Assert.assertTrue(userName2NotEnoughLength);
-        Assert.assertTrue(userName3NotEnoughLength);
+        Assert.assertEquals(false, firstCase);
+        Assert.assertEquals(true, secondCase);
+        Assert.assertEquals(true, thirdCase);
     }
 
+    @Test
+    public void should_ThrowExceptionWhenAddingUserWithInvalidName(){
+
+        assertThrows(WealthFundException.class, () -> {
+            userService.addNewUser("safg  ");
+        });
+    }
+
+    @Test
+    public void should_NotThrowExceptionWhenAddingUserWithValidName(){
+
+        when(userRepository.save(any())).thenReturn(any());
+        User actual = userService.addNewUser("NameIsOk");
+        assertNull(actual);
+    }
 }
