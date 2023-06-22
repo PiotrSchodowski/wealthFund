@@ -1,26 +1,31 @@
-package com.example.wealthFund.serviceTests;
+package com.example.wealthFund.service;
 
+import com.example.wealthFund.dto.UserDto;
 import com.example.wealthFund.exception.WealthFundException;
+import com.example.wealthFund.mapper.UserMapper;
 import com.example.wealthFund.repository.UserRepository;
 import com.example.wealthFund.repository.entity.User;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
     private final UserRepository userRepository;
 
-    public User addNewUser(String name) {
+    private final UserMapper userMapper;
+
+    public UserService(UserMapper userMapper,UserRepository userRepository) {
+        this.userMapper = userMapper;
+        this.userRepository = userRepository;
+    }
+
+    public UserDto addNewUser(String name) {
 
         if (isTheUserNameContainsWhiteSpaces(name)){
             logger.info("please enter the name without whitespace");
@@ -35,9 +40,11 @@ public class UserService {
             throw new WealthFundException("A user named " + name + " already exists. Enter a different name.");
         }
         else {
-            User user = new User(name);
             logger.info("User input successful");
-            return userRepository.save(user);
+
+            UserDto user = new UserDto(name);
+            userRepository.save(UserMapper.INSTANCE.userDtoToUser(user));
+            return user;
         }
     }
 
@@ -51,17 +58,17 @@ public class UserService {
             logger.info("User has been delete");
             userRepository.delete(user);
             return true;
-
         }
         else{
             logger.info("This user doesn't exists.");
             throw new WealthFundException("This user doesn't exists.");
         }
-
     }
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getUsers() {
+        List<UserDto> userDtoList;
+         userDtoList = UserMapper.INSTANCE.userListToUserDtoList(userRepository.findAll());
+        return userDtoList;
     }
 
     public boolean isTheUserNameContainsWhiteSpaces(String userName){

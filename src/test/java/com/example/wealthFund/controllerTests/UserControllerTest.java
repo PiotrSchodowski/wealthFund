@@ -3,7 +3,7 @@ package com.example.wealthFund.controllerTests;
 import com.example.wealthFund.repository.UserRepository;
 import com.example.wealthFund.repository.entity.User;
 import com.example.wealthFund.restController.UserController;
-import com.example.wealthFund.serviceTests.UserService;
+import com.example.wealthFund.service.UserService;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -1,4 +1,4 @@
-package com.example.wealthFund.serviceTests;
+package com.example.wealthFund.service;
 
 import com.example.wealthFund.exception.WealthFundException;
 import com.example.wealthFund.repository.UserRepository;
