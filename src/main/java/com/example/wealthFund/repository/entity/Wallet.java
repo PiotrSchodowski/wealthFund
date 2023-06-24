@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,11 +23,19 @@ public class Wallet {
     private String name;
     private String currency;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToOne(cascade = CascadeType.ALL)
     private Cash cash;
 
     @ElementCollection
     @OneToMany
     private Set<Position> positions;
+
+    @ElementCollection
+    @OneToMany(cascade = CascadeType.PERSIST)
+    private List<UserCashTransaction> userTransactions;
 
 }

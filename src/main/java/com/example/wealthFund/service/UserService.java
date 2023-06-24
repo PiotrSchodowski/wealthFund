@@ -1,86 +1,63 @@
 package com.example.wealthFund.service;
 
 import com.example.wealthFund.dto.UserDto;
-import com.example.wealthFund.exception.WealthFundException;
+import com.example.wealthFund.exception.UserExistException;
+import com.example.wealthFund.exception.UserNotExistException;
 import com.example.wealthFund.mapper.UserMapper;
 import com.example.wealthFund.repository.UserRepository;
 import com.example.wealthFund.repository.entity.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class UserService {
-
-    Logger logger = LoggerFactory.getLogger(UserService.class);
-
     private final UserRepository userRepository;
-
     private final UserMapper userMapper;
+    private final TextValidator textValidator;
 
-    public UserService(UserMapper userMapper,UserRepository userRepository) {
+    public UserService(UserMapper userMapper, UserRepository userRepository) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
+        this.textValidator = new TextValidator();
     }
+    public UserDto addNewUser(String userName) {
 
-    public UserDto addNewUser(String name) {
+        textValidator.checkTextValidity(userName);
+        validateUserExistenceThrowExceptionWhenExist(userName);
 
-        if (isTheUserNameContainsWhiteSpaces(name)){
-            logger.info("please enter the name without whitespace");
-            throw new WealthFundException( "please enter the name without whitespace");
-        }
-        if (isTheUserNameNotAcceptableLength(name)){
-            logger.info("the user name should contain from 3 to 16 characters");
-            throw new WealthFundException("the user name should contain from 3 to 16 characters");
-        }
-        if (userRepository.existsByUserName(name)) {
-            logger.info("A user named " + name + " already exists. Enter a different name.");
-            throw new WealthFundException("A user named " + name + " already exists. Enter a different name.");
-        }
-        else {
-            logger.info("User input successful");
-
-            UserDto user = new UserDto(name);
-            userRepository.save(UserMapper.INSTANCE.userDtoToUser(user));
-            return user;
-        }
+        UserDto user = new UserDto(userName);
+        userRepository.save(userMapper.userDtoToUser(user));
+        return user;
     }
+    public boolean deleteUser(String userName){
 
-    public boolean deleteUser(String name){
-        if (userRepository.existsByUserName(name))
-        {
-            new User();
-            User user = userRepository.findByName(name);
-            System.out.println("A user named " + name + " exists. User has been delete");
+        textValidator.checkTextValidity(userName);
+        validateUserExistenceThrowExceptionDoesNotExist(userName);
 
-            logger.info("User has been delete");
-            userRepository.delete(user);
-            return true;
-        }
-        else{
-            logger.info("This user doesn't exists.");
-            throw new WealthFundException("This user doesn't exists.");
-        }
+        new User();
+        User user = userRepository.findByName(userName);
+        userRepository.delete(user);
+        return true;
     }
-
     public List<UserDto> getUsers() {
         List<UserDto> userDtoList;
-         userDtoList = UserMapper.INSTANCE.userListToUserDtoList(userRepository.findAll());
+        userDtoList = userMapper.userListToUserDtoList(userRepository.findAll());
         return userDtoList;
     }
-
-    public boolean isTheUserNameContainsWhiteSpaces(String userName){
-        for(int i = 0; i < userName.length(); i++){
-            if(Character.isWhitespace(userName.charAt(i))){
-                return true;
-            }
-        }return false;
+    protected User getUserByName(String userName){
+        textValidator.checkTextValidity(userName);
+        validateUserExistenceThrowExceptionDoesNotExist(userName);
+        return userRepository.findByName(userName);
     }
-    public boolean isTheUserNameNotAcceptableLength(String userName){
-        if(userName.length() >= 3 && userName.length() <= 16){
-            return false;
-        }return true;
+    protected void validateUserExistenceThrowExceptionDoesNotExist(String userName) {
+        if (!userRepository.existsByUserName(userName)) {
+            throw new UserNotExistException(userName);
+        }
+    }
+    protected void validateUserExistenceThrowExceptionWhenExist(String userName) {
+        if (userRepository.existsByUserName(userName)) {
+            throw new UserExistException(userName);
+        }
     }
 }

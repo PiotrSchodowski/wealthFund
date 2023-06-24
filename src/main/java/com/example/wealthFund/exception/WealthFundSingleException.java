@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WealthFundException extends RuntimeException {
+public class WealthFundSingleException extends RuntimeException {
     String message;
 }

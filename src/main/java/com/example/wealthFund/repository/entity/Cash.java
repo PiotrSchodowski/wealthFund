@@ -20,9 +20,4 @@ public class Cash {
     Long id;
 
     private float value;
-
-    @ElementCollection
-    @OneToMany
-    private List<UserTransaction> userTransactions;
-
 }

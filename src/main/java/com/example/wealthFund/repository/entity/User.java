@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class User {
     private String name;
 
     @ElementCollection
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
     private Set<Wallet> wallets;
 
     public User(String name) {

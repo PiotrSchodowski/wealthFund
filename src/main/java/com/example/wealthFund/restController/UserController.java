@@ -1,7 +1,6 @@
 package com.example.wealthFund.restController;
 
 import com.example.wealthFund.dto.UserDto;
-import com.example.wealthFund.repository.entity.User;
 import com.example.wealthFund.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

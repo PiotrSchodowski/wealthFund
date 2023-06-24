@@ -1,64 +1,107 @@
 package com.example.wealthFund.service;
 
-import com.example.wealthFund.exception.WealthFundException;
+import com.example.wealthFund.dto.UserDto;
+import com.example.wealthFund.exception.UserExistException;
+import com.example.wealthFund.exception.UserNotExistException;
+import com.example.wealthFund.mapper.UserMapper;
 import com.example.wealthFund.repository.UserRepository;
 import com.example.wealthFund.repository.entity.User;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.Assert.assertNull;
+import org.mockito.MockitoAnnotations;
+import java.util.ArrayList;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
     @InjectMocks
-    UserService userService;
+    private UserService userService;
     @Mock
-    UserRepository userRepository;
-
-    @Test
-    public void should_ReturnTrueIfUserNameContainsWhitespace() {
-
-        boolean firstCase = userService.isTheUserNameContainsWhiteSpaces("srg");
-        boolean secondCase = userService.isTheUserNameContainsWhiteSpaces("sr g");
-        boolean thirdCase = userService.isTheUserNameContainsWhiteSpaces(" srg ");
-
-        Assert.assertEquals(false, firstCase);
-        Assert.assertEquals(true, secondCase);
-        Assert.assertEquals(true, thirdCase);
+    private UserRepository userRepository;
+    @Mock
+    private UserMapper userMapper;
+    @Mock
+    private TextValidator textValidator;
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
     @Test
-    public void should_ReturnTrueIfUserNameNotAcceptableLength() {
+    void addNewUser_WithValidUserName_ShouldReturnUserDto() {
 
-        boolean firstCase = userService.isTheUserNameNotAcceptableLength("OlaMaKota");
-        boolean secondCase = userService.isTheUserNameNotAcceptableLength("Ol");
-        boolean thirdCase = userService.isTheUserNameNotAcceptableLength("OlaMaKotaAKotMaOle");
+        String userName = "Piotr";
+        UserDto userDto = new UserDto(userName);
+        User user = new User();
 
-        Assert.assertEquals(false, firstCase);
-        Assert.assertEquals(true, secondCase);
-        Assert.assertEquals(true, thirdCase);
-    }
+        when(userMapper.userDtoToUser(any(UserDto.class))).thenReturn(user);
+        when(userRepository.existsByUserName(userName)).thenReturn(false);
+        when(userRepository.save(user)).thenReturn(user);
+        when(userMapper.userToUserDto(user)).thenReturn(userDto);
 
-    @Test
-    public void should_ThrowExceptionWhenAddingUserWithInvalidName(){
+        UserDto result = userService.addNewUser(userName);
 
-        assertThrows(WealthFundException.class, () -> {
-            userService.addNewUser("safg  ");
-        });
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(userName, result.getName());
     }
 
     @Test
-    public void should_NotThrowExceptionWhenAddingUserWithValidName(){
+    void addNewUser_WithExistingUserName_ShouldThrowUserExistException() {
+        // Given
+        String userName = "Piotr";
+        when(userRepository.existsByUserName(userName)).thenReturn(true);
 
-        when(userRepository.save(any())).thenReturn(any());
-        User actual = userService.addNewUser("NameIsOk");
-        assertNull(actual);
+        // When & Then
+        UserExistException exception = assertThrows(UserExistException.class, () -> userService.addNewUser(userName));
+        Assertions.assertEquals("Piotr exist in database, try other name", exception.getMessage());
+    }
+    @Test
+    void deleteUser_WithExistingUserName_ShouldReturnTrue() {
+        // Given
+        String userName = "Piotr";
+        when(userRepository.existsByUserName(userName)).thenReturn(true);
+        when(userRepository.findByName(userName)).thenReturn(new User());
+
+        // When
+        boolean result = userService.deleteUser(userName);
+
+        // Then
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void deleteUser_WithNonExistingUserName_ShouldThrowUserNotExistException() {
+        // Given
+        String userName = "Piotr";
+        when(userRepository.existsByUserName(userName)).thenReturn(false);
+
+        // When & Then
+        UserNotExistException exception = assertThrows(UserNotExistException.class, () -> userService.deleteUser(userName));
+        Assertions.assertEquals("Piotr does not exist in database", exception.getMessage());
+    }
+
+
+    @Test
+    void getUsers_ShouldReturnListOfUserDto() {
+        // Given
+        List<User> userList = new ArrayList<>();
+        userList.add(new User());
+        userList.add(new User());
+
+        when(userRepository.findAll()).thenReturn(userList);
+        when(userMapper.userListToUserDtoList(userList)).thenReturn(new ArrayList<>());
+
+        // When
+        List<UserDto> result = userService.getUsers();
+
+        // Then
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(0, result.size());
     }
 }
+
