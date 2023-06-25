@@ -1,20 +1,11 @@
 package com.example.wealthFund.exception;
 
-public class InsufficientFundsException extends RuntimeException{
-    public static final String MESSAGE = "insufficient funds in the account!";
-    public static final String MESSAGE2 = " You are trying to trade for an amount: ";
-    public static final String MESSAGE3 = " When you have in your account: ";
-    public static final String MESSAGE4 = " ";
+public class InsufficientFundsException extends RuntimeException {
+    private static final String MESSAGE_FORMAT = "Insufficient funds in the account! You are trying to trade for an amount: %.2f %s, " +
+            "when you have in your account: %.2f %s";
 
-    public InsufficientFundsException(float valueInTheAccount, float subtractedValue, String currency){
-        super(MESSAGE
-                + MESSAGE2
-                + subtractedValue
-                + MESSAGE4
-                + currency
-                + MESSAGE3
-                + valueInTheAccount
-                + MESSAGE4
-                + currency);
+    public InsufficientFundsException(float valueInTheAccount, float subtractedValue, String currency) {
+        super(String.format(MESSAGE_FORMAT, subtractedValue, currency, valueInTheAccount, currency));
     }
 }
+

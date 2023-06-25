@@ -1,7 +1,6 @@
 package com.example.wealthFund.service;
 
 import com.example.wealthFund.dto.WalletDto;
-import com.example.wealthFund.exception.UserNotExistException;
 import com.example.wealthFund.exception.WealthFundSingleException;
 import com.example.wealthFund.repository.UserRepository;
 import com.example.wealthFund.repository.WalletRepository;
@@ -26,6 +25,7 @@ public class WalletService {
         this.userService = userService;
     }
     public WalletDto addNewWallet(String userName, String walletName, String currency) {
+
         textValidator.checkTextValidity(userName);
         textValidator.checkTextValidity(walletName);
         userService.validateUserExistenceThrowExceptionDoesNotExist(userName);
@@ -39,6 +39,7 @@ public class WalletService {
     }
     @Transactional
     public boolean deleteWallet(String userName, String walletName) {
+
         textValidator.checkTextValidity(userName);
         textValidator.checkTextValidity(walletName);
         userService.validateUserExistenceThrowExceptionDoesNotExist(userName);
@@ -58,12 +59,14 @@ public class WalletService {
         throw new WealthFundSingleException("This wallet does not exist");
     }
 
-    protected Wallet getWalletByName(User user, String walletName) {
+    Wallet getWalletByName(User user, String walletName) {
+
         textValidator.checkTextValidity(walletName);
-        validateWalletExistenceThrowExceptionDoesNotExist(user.getName(), walletName);
+        ThrowDoesNotExistException(user.getName(), walletName);
         return findWalletByName(user.getWallets(), walletName);
     }
-    protected Wallet findWalletByName(Set<Wallet> wallets, String walletName) {
+    Wallet findWalletByName(Set<Wallet> wallets, String walletName) {
+
         for (Wallet wallet : wallets) {
             if (wallet.getName().equalsIgnoreCase(walletName)) {
                 return wallet;
@@ -72,11 +75,13 @@ public class WalletService {
         return null;
     }
     private void validateUniqueWalletName(String userName, String walletName) {
+
         if (walletRepository.existsByWalletNameAndUserName(walletName, userName)) {
             throw new WealthFundSingleException("This name of wallet already exists");
         }
     }
     private Wallet createWallet(String walletName, String currency, User user) {
+
         Wallet wallet = new Wallet();
         wallet.setName(walletName);
         wallet.setCurrency(currency);
@@ -84,13 +89,15 @@ public class WalletService {
         return wallet;
     }
     private void saveWalletWithUser(Wallet wallet, User user) {
+
         walletRepository.save(wallet);
         Set<Wallet> wallets = user.getWallets();
         wallets.add(wallet);
         user.setWallets(wallets);
         userRepository.save(user);
     }
-    protected void validateWalletExistenceThrowExceptionDoesNotExist(String userName, String walletName) {
+    void ThrowDoesNotExistException(String userName, String walletName) {
+
         if (!walletRepository.existsByWalletNameAndUserName(walletName, userName)) {
             throw new WealthFundSingleException("This wallet does not exist");
         }

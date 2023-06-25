@@ -17,7 +17,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/users/")
+    @PostMapping("/users")
     public UserDto addNewUser(@RequestParam String name) {
         return userService.addNewUser(name);
     }
@@ -27,7 +27,7 @@ public class UserController {
        return userService.deleteUser(name);
     }
 
-    @GetMapping("/users/")
+    @GetMapping("/users")
     public List<UserDto> getUsers() {
         return userService.getUsers();
     }

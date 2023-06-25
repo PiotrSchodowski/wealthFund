@@ -18,14 +18,17 @@ public class CashTransactionService {
     }
 
     public Wallet addNewPositiveCashTransaction(Float value, Wallet wallet){
+
         return addNewCashTransaction(value, wallet);
     }
 
     public Wallet addNewNegativeCashTransaction(Float value, Wallet wallet){
+
         return addNewCashTransaction(value * -1, wallet);
     }
 
     private Wallet addNewCashTransaction(Float value, Wallet wallet) {
+
         UserCashTransaction userCashTransaction = new UserCashTransaction();
         userCashTransaction.setValue(value);
         userCashTransaction.setDate(LocalDateTime.now());

@@ -41,21 +41,25 @@ public class UserService {
         return true;
     }
     public List<UserDto> getUsers() {
+
         List<UserDto> userDtoList;
         userDtoList = userMapper.userListToUserDtoList(userRepository.findAll());
         return userDtoList;
     }
     protected User getUserByName(String userName){
+
         textValidator.checkTextValidity(userName);
         validateUserExistenceThrowExceptionDoesNotExist(userName);
         return userRepository.findByName(userName);
     }
     protected void validateUserExistenceThrowExceptionDoesNotExist(String userName) {
+
         if (!userRepository.existsByUserName(userName)) {
             throw new UserNotExistException(userName);
         }
     }
     protected void validateUserExistenceThrowExceptionWhenExist(String userName) {
+
         if (userRepository.existsByUserName(userName)) {
             throw new UserExistException(userName);
         }

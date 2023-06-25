@@ -34,8 +34,4 @@ public class Position {
     @ManyToOne
     private Asset asset;
 
-    //    public Position(Position position){
-//        this.amount = position.amount;
-//    }
-
 }

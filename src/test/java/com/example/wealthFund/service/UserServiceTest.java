@@ -33,7 +33,7 @@ class UserServiceTest {
         MockitoAnnotations.openMocks(this);
     }
     @Test
-    void addNewUser_WithValidUserName_ShouldReturnUserDto() {
+    void shouldReturnUserDto() {
 
         String userName = "Piotr";
         UserDto userDto = new UserDto(userName);
@@ -51,7 +51,7 @@ class UserServiceTest {
     }
 
     @Test
-    void addNewUser_WithExistingUserName_ShouldThrowUserExistException() {
+    void shouldThrowUserExistException() {
         // Given
         String userName = "Piotr";
         when(userRepository.existsByUserName(userName)).thenReturn(true);
@@ -61,7 +61,7 @@ class UserServiceTest {
         Assertions.assertEquals("Piotr exist in database, try other name", exception.getMessage());
     }
     @Test
-    void deleteUser_WithExistingUserName_ShouldReturnTrue() {
+    void shouldReturnTrueWhileUserExist() {
         // Given
         String userName = "Piotr";
         when(userRepository.existsByUserName(userName)).thenReturn(true);
@@ -75,7 +75,7 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteUser_WithNonExistingUserName_ShouldThrowUserNotExistException() {
+    void ShouldThrowUserNotExistException() {
         // Given
         String userName = "Piotr";
         when(userRepository.existsByUserName(userName)).thenReturn(false);
@@ -87,7 +87,7 @@ class UserServiceTest {
 
 
     @Test
-    void getUsers_ShouldReturnListOfUserDto() {
+    void shouldReturnListOfUserDtoWhileUsersExist() {
         // Given
         List<User> userList = new ArrayList<>();
         userList.add(new User());

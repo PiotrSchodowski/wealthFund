@@ -12,21 +12,27 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class TextValidatorTest {
+
     @InjectMocks
     private TextValidator textValidator;
+
     @Mock
     private ContainsWhiteSpacesException containsWhiteSpacesException;
+
     @Mock
     private TextNotAcceptableLengthException textNotAcceptableLengthException;
+
     @Mock
     private ContainsSpecialCharactersException containsSpecialCharactersException;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void checkTextValidity_WithValidText_ShouldNotThrowExceptions() {
+    void shouldNotThrowExceptionWhileTextProper() {
+
         String validText = "Pioter123";
 
         textValidator.checkTextValidity(validText);
@@ -35,14 +41,16 @@ public class TextValidatorTest {
     }
 
     @Test
-    void checkTextValidity_WithTextContainingWhitespaces_ShouldThrowContainsWhiteSpacesException() {
+    void shouldThrowContainsWhiteSpacesException() {
+
         String textWithWhitespaces = "Piotr Schodowski";
 
         assertThrows(ContainsWhiteSpacesException.class, () -> textValidator.checkTextValidity(textWithWhitespaces));
     }
 
     @Test
-    void checkTextValidity_WithTextNotMeetingLengthRequirements_ShouldThrowTextNotAcceptableLengthException() {
+    void shouldThrowTextNotAcceptableLengthException() {
+
         String shortText = "Oo";
         String longText = "AlaMaKotaAKotMaAleINieZalujeWcale";
 
@@ -51,7 +59,8 @@ public class TextValidatorTest {
     }
 
     @Test
-    void checkTextValidity_WithTextContainingSpecialCharacters_ShouldThrowContainsSpecialCharactersException() {
+    void shouldThrowContainsSpecialCharactersException() {
+
         String textWithSpecialCharacters = "Hello@123";
 
         assertThrows(ContainsSpecialCharactersException.class, () -> textValidator.checkTextValidity(textWithSpecialCharacters));

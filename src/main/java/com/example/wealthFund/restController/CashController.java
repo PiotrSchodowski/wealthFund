@@ -16,11 +16,16 @@ public class CashController {
     }
 
     @PostMapping("user/wallet/{userName}/{walletName}/{valueOfDeposit}")
-    public boolean depositCashIntoTheWallet(@PathVariable String userName, @PathVariable String walletName, @PathVariable float valueOfDeposit){
+    public boolean depositCashIntoTheWallet(@PathVariable String userName,
+                                            @PathVariable String walletName,
+                                            @PathVariable float valueOfDeposit){
         return cashService.depositCashIntoTheWallet(userName,walletName,valueOfDeposit);
     }
+
     @DeleteMapping("user/wallet/{userName}/{walletName}/{valueOfWithdraw}")
-    public boolean withdrawCashFromTheWallet(@PathVariable String userName, @PathVariable String walletName, @PathVariable float valueOfWithdraw){
+    public boolean withdrawCashFromTheWallet(@PathVariable String userName,
+                                             @PathVariable String walletName,
+                                             @PathVariable float valueOfWithdraw){
         return cashService.withdrawCashFromTheWallet(userName,walletName,valueOfWithdraw);
     }
 
