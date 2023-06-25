@@ -1,20 +1,16 @@
 package com.example.wealthFund.repository.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Wallet {
+public class WalletEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,17 +21,18 @@ public class Wallet {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    @EqualsAndHashCode.Exclude
+    private UserEntity userEntity;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private Cash cash;
+    private CashEntity cashEntity;
 
     @ElementCollection
     @OneToMany
-    private Set<Position> positions;
+    private Set<PositionEntity> positions;
 
     @ElementCollection
     @OneToMany(cascade = CascadeType.PERSIST)
-    private List<UserCashTransaction> userTransactions;
+    private List<UserCashTransactionEntity> userTransactions;
 
 }

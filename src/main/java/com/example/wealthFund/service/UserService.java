@@ -5,7 +5,7 @@ import com.example.wealthFund.exception.UserExistException;
 import com.example.wealthFund.exception.UserNotExistException;
 import com.example.wealthFund.mapper.UserMapper;
 import com.example.wealthFund.repository.UserRepository;
-import com.example.wealthFund.repository.entity.User;
+import com.example.wealthFund.repository.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,10 +35,13 @@ public class UserService {
         textValidator.checkTextValidity(userName);
         validateUserExistenceThrowExceptionDoesNotExist(userName);
 
-        new User();
-        User user = userRepository.findByName(userName);
-        userRepository.delete(user);
-        return true;
+        int value = 0;
+        value = userRepository.deleteByUsername(userName);
+        if(value == 0){
+            return false;
+        }else{
+            return true;
+        }
     }
     public List<UserDto> getUsers() {
 
@@ -46,7 +49,7 @@ public class UserService {
         userDtoList = userMapper.userListToUserDtoList(userRepository.findAll());
         return userDtoList;
     }
-    protected User getUserByName(String userName){
+    protected UserEntity getUserByName(String userName){
 
         textValidator.checkTextValidity(userName);
         validateUserExistenceThrowExceptionDoesNotExist(userName);

@@ -1,18 +1,14 @@
 package com.example.wealthFund.repository.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Asset {
+public class AssetEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -22,5 +18,5 @@ public class Asset {
     private float value;
 
     @OneToOne
-    private Dividend dividend;
+    private DividendEntity dividendEntity;
 }

@@ -31,4 +31,5 @@ public class UserController {
     public List<UserDto> getUsers() {
         return userService.getUsers();
     }
+
 }

@@ -4,8 +4,8 @@ import com.example.wealthFund.dto.WalletDto;
 import com.example.wealthFund.exception.WealthFundSingleException;
 import com.example.wealthFund.repository.UserRepository;
 import com.example.wealthFund.repository.WalletRepository;
-import com.example.wealthFund.repository.entity.User;
-import com.example.wealthFund.repository.entity.Wallet;
+import com.example.wealthFund.repository.entity.UserEntity;
+import com.example.wealthFund.repository.entity.WalletEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,11 +31,11 @@ public class WalletService {
         userService.validateUserExistenceThrowExceptionDoesNotExist(userName);
         validateUniqueWalletName(userName, walletName);
 
-        User user = userRepository.findByName(userName);
-        Wallet wallet = createWallet(walletName, currency, user);
-        saveWalletWithUser(wallet, user);
+        UserEntity userEntity = userRepository.findByName(userName);
+        WalletEntity walletEntity = createWallet(walletName, currency, userEntity);
+        saveWalletWithUser(walletEntity, userEntity);
 
-        return new WalletDto(wallet.getName(), wallet.getCurrency());
+        return new WalletDto(walletEntity.getName(), walletEntity.getCurrency());
     }
     @Transactional
     public boolean deleteWallet(String userName, String walletName) {
@@ -44,32 +44,32 @@ public class WalletService {
         textValidator.checkTextValidity(walletName);
         userService.validateUserExistenceThrowExceptionDoesNotExist(userName);
 
-        User user = userRepository.findByName(userName);
-        Set<Wallet> wallets = user.getWallets();
-        Wallet walletToRemove = findWalletByName(wallets, walletName);
+        UserEntity userEntity = userRepository.findByName(userName);
+        Set<WalletEntity> wallets = userEntity.getWallets();
+        WalletEntity walletToRemove = findWalletByName(wallets, walletName);
 
         if (walletToRemove != null) {
             wallets.remove(walletToRemove);
-            user.setWallets(wallets);
+            userEntity.setWallets(wallets);
 
-            userRepository.save(user);
+            userRepository.save(userEntity);
             walletRepository.delete(walletToRemove);
             return true;
         }
         throw new WealthFundSingleException("This wallet does not exist");
     }
 
-    Wallet getWalletByName(User user, String walletName) {
+    WalletEntity getWalletByName(UserEntity userEntity, String walletName) {
 
         textValidator.checkTextValidity(walletName);
-        ThrowDoesNotExistException(user.getName(), walletName);
-        return findWalletByName(user.getWallets(), walletName);
+        ThrowDoesNotExistException(userEntity.getName(), walletName);
+        return findWalletByName(userEntity.getWallets(), walletName);
     }
-    Wallet findWalletByName(Set<Wallet> wallets, String walletName) {
+    WalletEntity findWalletByName(Set<WalletEntity> wallets, String walletName) {
 
-        for (Wallet wallet : wallets) {
-            if (wallet.getName().equalsIgnoreCase(walletName)) {
-                return wallet;
+        for (WalletEntity walletEntity : wallets) {
+            if (walletEntity.getName().equalsIgnoreCase(walletName)) {
+                return walletEntity;
             }
         }
         return null;
@@ -80,21 +80,21 @@ public class WalletService {
             throw new WealthFundSingleException("This name of wallet already exists");
         }
     }
-    private Wallet createWallet(String walletName, String currency, User user) {
+    private WalletEntity createWallet(String walletName, String currency, UserEntity userEntity) {
 
-        Wallet wallet = new Wallet();
-        wallet.setName(walletName);
-        wallet.setCurrency(currency);
-        wallet.setUser(user);
-        return wallet;
+        WalletEntity walletEntity = new WalletEntity();
+        walletEntity.setName(walletName);
+        walletEntity.setCurrency(currency);
+        walletEntity.setUserEntity(userEntity);
+        return walletEntity;
     }
-    private void saveWalletWithUser(Wallet wallet, User user) {
+    private void saveWalletWithUser(WalletEntity wallet, UserEntity userEntity) {
 
         walletRepository.save(wallet);
-        Set<Wallet> wallets = user.getWallets();
+        Set<WalletEntity> wallets = userEntity.getWallets();
         wallets.add(wallet);
-        user.setWallets(wallets);
-        userRepository.save(user);
+        userEntity.setWallets(wallets);
+        userRepository.save(userEntity);
     }
     void ThrowDoesNotExistException(String userName, String walletName) {
 

@@ -1,20 +1,15 @@
 package com.example.wealthFund.repository.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.Cascade;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,9 +19,6 @@ public class User {
 
     @ElementCollection
     @OneToMany(cascade = CascadeType.REMOVE)
-    private Set<Wallet> wallets;
+    private Set<WalletEntity> wallets;
 
-    public User(String name) {
-        this.name = name;
-    }
 }

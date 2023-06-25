@@ -20,8 +20,10 @@ public class WalletController {
     public WalletDto addNewWallet(@PathVariable String userName, @PathVariable String walletName, @PathVariable String currency){
         return walletService.addNewWallet(userName,walletName,currency);
     }
+
     @DeleteMapping("/user/wallets/{userName}/{walletName}")
     public boolean deleteWallet(@PathVariable String userName, @PathVariable String walletName){
         return walletService.deleteWallet(userName,walletName);
     }
+
 }

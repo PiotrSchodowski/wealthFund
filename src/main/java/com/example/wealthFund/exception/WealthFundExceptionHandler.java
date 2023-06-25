@@ -12,34 +12,42 @@ public class WealthFundExceptionHandler {
     public ResponseEntity<String> handleException(WealthFundSingleException wealthFundException) {
         return new ResponseEntity<String>("Exception: " + wealthFundException.getMessage(), HttpStatus.NOT_ACCEPTABLE);
     }
+
     @ExceptionHandler(UserNotExistException.class)
     public ResponseEntity<String> handleUserNotExistException(UserNotExistException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
     @ExceptionHandler(UserExistException.class)
     public ResponseEntity<String> handleUserExistException(UserExistException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
     @ExceptionHandler(TextNotAcceptableLengthException.class)
     public ResponseEntity<String> handleTextNotAcceptableLengthException(TextNotAcceptableLengthException ex) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ex.getMessage());
     }
+
     @ExceptionHandler(ContainsWhiteSpacesException.class)
     public ResponseEntity<String> handleContainsWhiteSpacesException(ContainsWhiteSpacesException ex) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ex.getMessage());
     }
+
     @ExceptionHandler(ContainsSpecialCharactersException.class)
     public ResponseEntity<String> handleContainsSpecialCharactersException(ContainsSpecialCharactersException ex) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ex.getMessage());
     }
+
     @ExceptionHandler(InsufficientFundsException.class)
     public ResponseEntity<String> handleInsufficientFundsException(InsufficientFundsException ex) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ex.getMessage());
     }
+
     @ExceptionHandler(ShouldByOnlyPositiveException.class)
     public ResponseEntity<String> handleShouldByOnlyPositiveException(ShouldByOnlyPositiveException ex) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ex.getMessage());
     }
+
     @ExceptionHandler(PrecisionException.class)
     public ResponseEntity<String> handlePrecisionException(PrecisionException ex) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ex.getMessage());

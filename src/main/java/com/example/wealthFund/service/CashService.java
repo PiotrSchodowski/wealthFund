@@ -3,9 +3,9 @@ package com.example.wealthFund.service;
 import com.example.wealthFund.exception.InsufficientFundsException;
 import com.example.wealthFund.repository.UserRepository;
 import com.example.wealthFund.repository.WalletRepository;
-import com.example.wealthFund.repository.entity.Cash;
-import com.example.wealthFund.repository.entity.User;
-import com.example.wealthFund.repository.entity.Wallet;
+import com.example.wealthFund.repository.entity.CashEntity;
+import com.example.wealthFund.repository.entity.UserEntity;
+import com.example.wealthFund.repository.entity.WalletEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,54 +32,55 @@ public class CashService {
     public boolean depositCashIntoTheWallet(String userName, String walletName, float valueOfDeposit) {
 
         textValidator.checkNumberValidity(valueOfDeposit);
-        User user = userService.getUserByName(userName);
-        Wallet wallet = walletService.getWalletByName(user, walletName);
+        UserEntity userEntity = userService.getUserByName(userName);
+        WalletEntity walletEntity = walletService.getWalletByName(userEntity, walletName);
 
-        addCashToWallet(wallet, valueOfDeposit);
-        wallet = cashTransactionService.addNewPositiveCashTransaction(valueOfDeposit, wallet);
+        addCashToWallet(walletEntity, valueOfDeposit);
+        walletEntity = cashTransactionService.addNewPositiveCashTransaction(valueOfDeposit, walletEntity);
 
-        walletRepository.save(wallet);
-        userRepository.save(user);
+        walletRepository.save(walletEntity);
+        userRepository.save(userEntity);
         return true;
     }
 
     public boolean withdrawCashFromTheWallet(String userName, String walletName, float valueOfWithdraw) {
 
         textValidator.checkNumberValidity(valueOfWithdraw);
-        User user = userService.getUserByName(userName);
-        Wallet wallet = walletService.getWalletByName(user, walletName);
+        UserEntity userEntity = userService.getUserByName(userName);
+        WalletEntity walletEntity = walletService.getWalletByName(userEntity, walletName);
 
-        withdrawCashFromWallet(wallet, valueOfWithdraw);
-        wallet = cashTransactionService.addNewNegativeCashTransaction(valueOfWithdraw, wallet);
+        withdrawCashFromWallet(walletEntity, valueOfWithdraw);
+        walletEntity = cashTransactionService.addNewNegativeCashTransaction(valueOfWithdraw, walletEntity);
 
-        walletRepository.save(wallet);
-        userRepository.save(user);
+        walletRepository.save(walletEntity);
+        userRepository.save(userEntity);
         return true;
     }
 
-    private void addCashToWallet(Wallet wallet, float valueOfDeposit) {
+    private void addCashToWallet(WalletEntity walletEntity, float valueOfDeposit) {
 
-        Cash cash = getOrCreateCash(wallet);
-        cash.setValue(cash.getValue() + valueOfDeposit);
+        CashEntity cashEntity = getOrCreateCash(walletEntity);
+        walletEntity.setCashEntity(cashEntity);
+        cashEntity.setValue(cashEntity.getValue() + valueOfDeposit);
     }
 
-    private void withdrawCashFromWallet(Wallet wallet, float valueOfWithdraw) {
+    private void withdrawCashFromWallet(WalletEntity walletEntity, float valueOfWithdraw) {
 
-        Cash cash = getOrCreateCash(wallet);
-        float previousValueOfCash = cash.getValue();
+        CashEntity cashEntity = getOrCreateCash(walletEntity);
+        walletEntity.setCashEntity(cashEntity);
+        float previousValueOfCash = cashEntity.getValue();
         if (previousValueOfCash < valueOfWithdraw) {
-            throw new InsufficientFundsException(previousValueOfCash, valueOfWithdraw, wallet.getCurrency());
+            throw new InsufficientFundsException(previousValueOfCash, valueOfWithdraw, walletEntity.getCurrency());
         }
-        cash.setValue(previousValueOfCash - valueOfWithdraw);
+        cashEntity.setValue(previousValueOfCash - valueOfWithdraw);
     }
 
-    private Cash getOrCreateCash(Wallet wallet) {
+    private CashEntity getOrCreateCash(WalletEntity walletEntity) {
 
-        Cash cash = wallet.getCash();
-        if (cash == null) {
-            cash = new Cash();
-            wallet.setCash(cash);
+        CashEntity cashEntity = walletEntity.getCashEntity();
+        if (cashEntity == null) {
+            cashEntity = new CashEntity();
         }
-        return cash;
+        return cashEntity;
     }
 }

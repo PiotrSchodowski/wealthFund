@@ -1,8 +1,8 @@
 package com.example.wealthFund.service;
 
 import com.example.wealthFund.repository.CashTransactionRepository;
-import com.example.wealthFund.repository.entity.UserCashTransaction;
-import com.example.wealthFund.repository.entity.Wallet;
+import com.example.wealthFund.repository.entity.UserCashTransactionEntity;
+import com.example.wealthFund.repository.entity.WalletEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,27 +17,27 @@ public class CashTransactionService {
         this.cashTransactionRepository = cashTransactionRepository;
     }
 
-    public Wallet addNewPositiveCashTransaction(Float value, Wallet wallet){
+    public WalletEntity addNewPositiveCashTransaction(Float value, WalletEntity walletEntity){
 
-        return addNewCashTransaction(value, wallet);
+        return addNewCashTransaction(value, walletEntity);
     }
 
-    public Wallet addNewNegativeCashTransaction(Float value, Wallet wallet){
+    public WalletEntity addNewNegativeCashTransaction(Float value, WalletEntity walletEntity){
 
-        return addNewCashTransaction(value * -1, wallet);
+        return addNewCashTransaction(value * -1, walletEntity);
     }
 
-    private Wallet addNewCashTransaction(Float value, Wallet wallet) {
+    private WalletEntity addNewCashTransaction(Float value, WalletEntity walletEntity) {
 
-        UserCashTransaction userCashTransaction = new UserCashTransaction();
-        userCashTransaction.setValue(value);
-        userCashTransaction.setDate(LocalDateTime.now());
-        cashTransactionRepository.save(userCashTransaction);
+        UserCashTransactionEntity userCashTransactionEntity = new UserCashTransactionEntity();
+        userCashTransactionEntity.setValue(value);
+        userCashTransactionEntity.setDate(LocalDateTime.now());
+        cashTransactionRepository.save(userCashTransactionEntity);
 
-        List<UserCashTransaction> userCashTransactionList = wallet.getUserTransactions();
-        userCashTransactionList.add(userCashTransaction);
-        wallet.setUserTransactions(userCashTransactionList);
+        List<UserCashTransactionEntity> userCashTransactionEntityList = walletEntity.getUserTransactions();
+        userCashTransactionEntityList.add(userCashTransactionEntity);
+        walletEntity.setUserTransactions(userCashTransactionEntityList);
 
-        return wallet;
+        return walletEntity;
     }
 }
