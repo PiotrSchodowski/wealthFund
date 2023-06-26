@@ -21,6 +21,7 @@ public class UserService {
         this.userRepository = userRepository;
         this.textValidator = new TextValidator();
     }
+
     public UserDto addNewUser(String userName) {
 
         textValidator.checkTextValidity(userName);
@@ -30,37 +31,37 @@ public class UserService {
         userRepository.save(userMapper.userDtoToUser(user));
         return user;
     }
-    public boolean deleteUser(String userName){
+
+    public boolean deleteUser(String userName) {
 
         textValidator.checkTextValidity(userName);
         validateUserExistenceThrowExceptionDoesNotExist(userName);
 
-        int value = 0;
-        value = userRepository.deleteByUsername(userName);
-        if(value == 0){
-            return false;
-        }else{
-            return true;
-        }
+        int value = userRepository.deleteByName(userName);
+        return value != 0;
     }
+
     public List<UserDto> getUsers() {
 
         List<UserDto> userDtoList;
         userDtoList = userMapper.userListToUserDtoList(userRepository.findAll());
         return userDtoList;
     }
+
     protected UserEntity getUserByName(String userName){
 
         textValidator.checkTextValidity(userName);
         validateUserExistenceThrowExceptionDoesNotExist(userName);
         return userRepository.findByName(userName);
     }
+
     protected void validateUserExistenceThrowExceptionDoesNotExist(String userName) {
 
         if (!userRepository.existsByUserName(userName)) {
             throw new UserNotExistException(userName);
         }
     }
+
     protected void validateUserExistenceThrowExceptionWhenExist(String userName) {
 
         if (userRepository.existsByUserName(userName)) {

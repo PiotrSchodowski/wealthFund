@@ -10,6 +10,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class WalletEntity {
 
     @Id
@@ -32,7 +33,8 @@ public class WalletEntity {
     private Set<PositionEntity> positions;
 
     @ElementCollection
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinColumn(name = "wallet_id")
     private List<UserCashTransactionEntity> userTransactions;
 
 }

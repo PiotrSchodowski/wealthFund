@@ -82,11 +82,11 @@ public class WalletService {
     }
     private WalletEntity createWallet(String walletName, String currency, UserEntity userEntity) {
 
-        WalletEntity walletEntity = new WalletEntity();
-        walletEntity.setName(walletName);
-        walletEntity.setCurrency(currency);
-        walletEntity.setUserEntity(userEntity);
-        return walletEntity;
+        return WalletEntity.builder()
+                .name(walletName)
+                .currency(currency)
+                .userEntity(userEntity)
+                .build();
     }
     private void saveWalletWithUser(WalletEntity wallet, UserEntity userEntity) {
 

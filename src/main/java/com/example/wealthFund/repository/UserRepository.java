@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity,Long> {
@@ -20,7 +19,6 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
 
      @Transactional
      @Modifying
-     @Query(value = "DELETE FROM UserEntity WHERE name = :name")
-     int deleteByUsername(@Param("name") String name);
+     int deleteByName(@Param("name") String name);
 
 }

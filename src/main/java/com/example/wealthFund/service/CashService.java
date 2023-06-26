@@ -36,6 +36,7 @@ public class CashService {
         WalletEntity walletEntity = walletService.getWalletByName(userEntity, walletName);
 
         addCashToWallet(walletEntity, valueOfDeposit);
+
         walletEntity = cashTransactionService.addNewPositiveCashTransaction(valueOfDeposit, walletEntity);
 
         walletRepository.save(walletEntity);

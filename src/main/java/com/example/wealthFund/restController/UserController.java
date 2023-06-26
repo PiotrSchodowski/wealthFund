@@ -17,8 +17,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/users")
-    public UserDto addNewUser(@RequestParam String name) {
+    @PostMapping("/users/{name}")
+    public UserDto addNewUser(@PathVariable String name) {
         return userService.addNewUser(name);
     }
 

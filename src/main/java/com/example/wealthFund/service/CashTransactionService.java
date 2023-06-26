@@ -29,13 +29,16 @@ public class CashTransactionService {
 
     private WalletEntity addNewCashTransaction(Float value, WalletEntity walletEntity) {
 
-        UserCashTransactionEntity userCashTransactionEntity = new UserCashTransactionEntity();
-        userCashTransactionEntity.setValue(value);
-        userCashTransactionEntity.setDate(LocalDateTime.now());
+        UserCashTransactionEntity userCashTransactionEntity = UserCashTransactionEntity.builder()
+                .value(value)
+                .date(LocalDateTime.now())
+                .build();
+
         cashTransactionRepository.save(userCashTransactionEntity);
 
         List<UserCashTransactionEntity> userCashTransactionEntityList = walletEntity.getUserTransactions();
         userCashTransactionEntityList.add(userCashTransactionEntity);
+
         walletEntity.setUserTransactions(userCashTransactionEntityList);
 
         return walletEntity;

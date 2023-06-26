@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class WealthFundExceptionHandler {
 
     @ExceptionHandler(WealthFundSingleException.class)
-    public ResponseEntity<String> handleException(WealthFundSingleException wealthFundException) {
-        return new ResponseEntity<String>("Exception: " + wealthFundException.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<String> handleSingleException(WealthFundSingleException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ex.getMessage());
     }
 
     @ExceptionHandler(UserNotExistException.class)

@@ -2,6 +2,7 @@ package com.example.wealthFund.restController;
 
 import com.example.wealthFund.dto.WalletDto;
 import com.example.wealthFund.service.WalletService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,12 +17,12 @@ public class WalletController {
         this.walletService = walletService;
     }
 
-    @PostMapping("/user/wallets/{userName}/{walletName}/{currency}")
+    @PostMapping("/user/{userName}/wallets/{walletName}/{currency}")
     public WalletDto addNewWallet(@PathVariable String userName, @PathVariable String walletName, @PathVariable String currency){
         return walletService.addNewWallet(userName,walletName,currency);
     }
 
-    @DeleteMapping("/user/wallets/{userName}/{walletName}")
+    @DeleteMapping("/user/{userName}/wallets/{walletName}")
     public boolean deleteWallet(@PathVariable String userName, @PathVariable String walletName){
         return walletService.deleteWallet(userName,walletName);
     }
