@@ -20,12 +20,12 @@ public class CashService {
 
     public CashService(UserRepository userRepository, WalletRepository walletRepository,
                        TextValidator textValidator, UserService userService,
-                       WalletService walletservice, CashTransactionService cashTransactionService) {
+                       WalletService walletService, CashTransactionService cashTransactionService) {
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.textValidator = textValidator;
         this.userService = userService;
-        this.walletService = walletservice;
+        this.walletService = walletService;
         this.cashTransactionService = cashTransactionService;
     }
 
@@ -33,14 +33,8 @@ public class CashService {
 
         textValidator.checkNumberValidity(valueOfDeposit);
         UserEntity userEntity = userService.getUserByName(userName);
-        WalletEntity walletEntity = walletService.getWalletByName(userEntity, walletName);
-
-        addCashToWallet(walletEntity, valueOfDeposit);
-
-        walletEntity = cashTransactionService.addNewPositiveCashTransaction(valueOfDeposit, walletEntity);
-
+        WalletEntity walletEntity = setupWalletWithDepositOperation(walletName,valueOfDeposit,userEntity);
         walletRepository.save(walletEntity);
-        userRepository.save(userEntity);
         return true;
     }
 
@@ -48,32 +42,45 @@ public class CashService {
 
         textValidator.checkNumberValidity(valueOfWithdraw);
         UserEntity userEntity = userService.getUserByName(userName);
-        WalletEntity walletEntity = walletService.getWalletByName(userEntity, walletName);
-
-        withdrawCashFromWallet(walletEntity, valueOfWithdraw);
-        walletEntity = cashTransactionService.addNewNegativeCashTransaction(valueOfWithdraw, walletEntity);
-
+        WalletEntity walletEntity = setupWalletWithWithdrawOperation(walletName, valueOfWithdraw, userEntity);
         walletRepository.save(walletEntity);
-        userRepository.save(userEntity);
         return true;
     }
 
-    private void addCashToWallet(WalletEntity walletEntity, float valueOfDeposit) {
+    private WalletEntity setupWalletWithDepositOperation(String walletName, float valueOfDeposit, UserEntity userEntity){
 
-        CashEntity cashEntity = getOrCreateCash(walletEntity);
-        walletEntity.setCashEntity(cashEntity);
-        cashEntity.setValue(cashEntity.getValue() + valueOfDeposit);
+        WalletEntity walletEntity = walletService.getWalletByName(userEntity, walletName);
+        CashEntity actualCash = getOrCreateCash(walletEntity);
+        CashEntity updatedCash = depositCash(actualCash,valueOfDeposit);
+        walletEntity.setCashEntity(updatedCash);
+        walletEntity = cashTransactionService.addNewPositiveCashTransaction(valueOfDeposit, walletEntity);
+        return walletEntity;
     }
 
-    private void withdrawCashFromWallet(WalletEntity walletEntity, float valueOfWithdraw) {
+    private WalletEntity setupWalletWithWithdrawOperation(String walletName, float valueOfWithdraw, UserEntity userEntity) {
 
-        CashEntity cashEntity = getOrCreateCash(walletEntity);
-        walletEntity.setCashEntity(cashEntity);
+        WalletEntity walletEntity = walletService.getWalletByName(userEntity, walletName);
+        CashEntity actualCash = getOrCreateCash(walletEntity);
+        CashEntity updatedCash = tryToWithdrawAndUpdateCash(actualCash, valueOfWithdraw, walletEntity.getCurrency());
+        walletEntity.setCashEntity(updatedCash);
+        walletEntity = cashTransactionService.addNewNegativeCashTransaction(valueOfWithdraw, walletEntity);
+        return walletEntity;
+    }
+
+    private CashEntity depositCash(CashEntity cashEntity, float valueOfDeposit) {
+
+        cashEntity.setValue(cashEntity.getValue() + valueOfDeposit);
+        return cashEntity;
+    }
+
+    private CashEntity tryToWithdrawAndUpdateCash(CashEntity cashEntity, float valueOfWithdraw, String currency) {
+
         float previousValueOfCash = cashEntity.getValue();
         if (previousValueOfCash < valueOfWithdraw) {
-            throw new InsufficientFundsException(previousValueOfCash, valueOfWithdraw, walletEntity.getCurrency());
+            throw new InsufficientFundsException(previousValueOfCash, valueOfWithdraw, currency);
         }
         cashEntity.setValue(previousValueOfCash - valueOfWithdraw);
+        return cashEntity;
     }
 
     private CashEntity getOrCreateCash(WalletEntity walletEntity) {
