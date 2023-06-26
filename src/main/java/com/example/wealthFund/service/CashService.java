@@ -11,17 +11,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class CashService {
 
-    private final UserRepository userRepository;
     private final WalletRepository walletRepository;
     private final TextValidator textValidator;
     private final UserService userService;
     private final WalletService walletService;
     private final CashTransactionService cashTransactionService;
 
-    public CashService(UserRepository userRepository, WalletRepository walletRepository,
+    public CashService(WalletRepository walletRepository,
                        TextValidator textValidator, UserService userService,
                        WalletService walletService, CashTransactionService cashTransactionService) {
-        this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.textValidator = textValidator;
         this.userService = userService;
@@ -33,7 +31,7 @@ public class CashService {
 
         textValidator.checkNumberValidity(valueOfDeposit);
         UserEntity userEntity = userService.getUserByName(userName);
-        WalletEntity walletEntity = setupWalletWithDepositOperation(walletName,valueOfDeposit,userEntity);
+        WalletEntity walletEntity = setupWalletWithDepositOperation(walletName, valueOfDeposit, userEntity);
         walletRepository.save(walletEntity);
         return true;
     }
@@ -47,11 +45,11 @@ public class CashService {
         return true;
     }
 
-    private WalletEntity setupWalletWithDepositOperation(String walletName, float valueOfDeposit, UserEntity userEntity){
+    private WalletEntity setupWalletWithDepositOperation(String walletName, float valueOfDeposit, UserEntity userEntity) {
 
         WalletEntity walletEntity = walletService.getWalletByName(userEntity, walletName);
         CashEntity actualCash = getOrCreateCash(walletEntity);
-        CashEntity updatedCash = depositCash(actualCash,valueOfDeposit);
+        CashEntity updatedCash = depositCash(actualCash, valueOfDeposit);
         walletEntity.setCashEntity(updatedCash);
         walletEntity = cashTransactionService.addNewPositiveCashTransaction(valueOfDeposit, walletEntity);
         return walletEntity;
