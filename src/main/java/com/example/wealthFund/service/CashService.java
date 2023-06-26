@@ -1,7 +1,6 @@
 package com.example.wealthFund.service;
 
 import com.example.wealthFund.exception.InsufficientFundsException;
-import com.example.wealthFund.repository.UserRepository;
 import com.example.wealthFund.repository.WalletRepository;
 import com.example.wealthFund.repository.entity.CashEntity;
 import com.example.wealthFund.repository.entity.UserEntity;

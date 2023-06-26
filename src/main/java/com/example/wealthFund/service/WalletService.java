@@ -88,11 +88,11 @@ public class WalletService {
                 .userEntity(userEntity)
                 .build();
     }
-    private void saveWalletWithUser(WalletEntity wallet, UserEntity userEntity) {
+    private void saveWalletWithUser(WalletEntity walletEntity, UserEntity userEntity) {
 
-        walletRepository.save(wallet);
+        walletRepository.save(walletEntity);
         Set<WalletEntity> wallets = userEntity.getWallets();
-        wallets.add(wallet);
+        wallets.add(walletEntity);
         userEntity.setWallets(wallets);
         userRepository.save(userEntity);
     }
